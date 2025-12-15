@@ -9,6 +9,27 @@ interface OnboardingProps {
   currentPhase: AppView;
 }
 
+interface OptionButtonProps {
+  selected: boolean;
+  onClick: () => void;
+  label: string;
+  icon?: React.ReactNode;
+}
+
+const OptionButton: React.FC<OptionButtonProps> = ({ selected, onClick, label, icon }) => (
+  <button
+    onClick={onClick}
+    className={`relative flex items-center justify-center gap-2 py-4 px-2 rounded-2xl text-sm font-medium transition-all duration-300 ${
+      selected 
+        ? 'bg-black text-white shadow-lg scale-105' 
+        : 'bg-white text-gray-600 hover:bg-gray-50'
+    }`}
+  >
+    {icon}
+    {label}
+  </button>
+);
+
 export const Onboarding: React.FC<OnboardingProps> = ({ onComplete, setView, currentPhase }) => {
   const [formData, setFormData] = useState<Partial<UserProfile>>({
     gender: 'female',
@@ -31,139 +52,131 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete, setView, cur
   };
 
   return (
-    <div className="min-h-screen bg-rose-50 flex flex-col items-center justify-center p-6">
-      <div className="mb-8 scale-110">
-        <Avatar mood="happy" size="md" />
+    <div className="min-h-screen bg-background flex flex-col p-6 safe-area-bottom">
+      {/* Header */}
+      <div className="flex flex-col items-center pt-10 mb-8 animate-fade-in">
+         <Avatar mood="happy" size="md" />
+         <div className="mt-6 text-center">
+            <h2 className="text-2xl font-bold text-gray-900">
+                {currentPhase === AppView.ONBOARDING_PHASE_1 ? '关于你' : '最近状态'}
+            </h2>
+            <p className="text-gray-500 mt-2">
+                {currentPhase === AppView.ONBOARDING_PHASE_1 ? '建立你的专属健康档案' : '帮助 Pudding 给你更精准的建议'}
+            </p>
+         </div>
       </div>
 
-      <div className="bg-white w-full max-w-md rounded-3xl shadow-xl p-8 space-y-6 relative overflow-hidden">
-        {/* Progress Bar */}
-        <div className="absolute top-0 left-0 w-full h-2 bg-gray-100">
-           <div 
-             className="h-full bg-primary transition-all duration-500" 
-             style={{ width: currentPhase === AppView.ONBOARDING_PHASE_1 ? '50%' : '100%' }}
-           ></div>
-        </div>
-
-        <div className="text-center space-y-2">
-            <h2 className="text-2xl font-bold text-gray-800">
-                {currentPhase === AppView.ONBOARDING_PHASE_1 ? '建立你的专属档案' : '最近感觉如何？'}
-            </h2>
-            <p className="text-sm text-gray-500">
-                {currentPhase === AppView.ONBOARDING_PHASE_1 ? '让我更了解你的身体基础信息' : '这些信息能帮我做出更贴心的建议'}
-            </p>
-        </div>
-
+      <div className="flex-1 w-full max-w-md mx-auto space-y-6">
         {currentPhase === AppView.ONBOARDING_PHASE_1 ? (
-            <div className="space-y-4 animate-in fade-in slide-in-from-right duration-500">
+            <div className="space-y-6 animate-slide-up">
                 <div className="grid grid-cols-2 gap-4">
-                    <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">身高 (cm)</label>
+                    <div className="bg-white p-4 rounded-3xl shadow-sm">
+                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">身高 (cm)</label>
                         <input 
                             type="number" 
-                            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/50 outline-none"
+                            className="w-full text-3xl font-bold bg-transparent outline-none placeholder-gray-200 text-gray-900"
                             placeholder="165"
                             onChange={e => updateForm('height', parseFloat(e.target.value))}
                         />
                     </div>
-                    <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">体重 (kg)</label>
+                    <div className="bg-white p-4 rounded-3xl shadow-sm">
+                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">体重 (kg)</label>
                         <input 
                             type="number" 
-                            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/50 outline-none"
+                            className="w-full text-3xl font-bold bg-transparent outline-none placeholder-gray-200 text-gray-900"
                             placeholder="55"
                             onChange={e => updateForm('weight', parseFloat(e.target.value))}
                         />
                     </div>
                 </div>
-                
-                <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">年龄</label>
-                    <input 
-                        type="number" 
-                        className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/50 outline-none"
-                        placeholder="24"
-                        onChange={e => updateForm('age', parseFloat(e.target.value))}
-                    />
-                </div>
 
-                <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">生理期情况</label>
-                    <div className="flex gap-2">
+                <div className="bg-white p-5 rounded-3xl shadow-sm space-y-4">
+                    <label className="block text-sm font-semibold text-gray-900">生理期情况</label>
+                    <div className="grid grid-cols-3 gap-3">
                         {['regular', 'irregular', 'none'].map((status) => (
-                            <button
+                            <OptionButton
                                 key={status}
+                                selected={formData.periodStatus === status}
                                 onClick={() => updateForm('periodStatus', status)}
-                                className={`flex-1 py-2 text-xs rounded-xl border ${formData.periodStatus === status ? 'bg-primary text-white border-primary' : 'bg-white text-gray-600 border-gray-200'}`}
-                            >
-                                {status === 'regular' ? '规律' : status === 'irregular' ? '不规律' : '无/保密'}
-                            </button>
+                                label={status === 'regular' ? '规律' : status === 'irregular' ? '不规律' : '保密'}
+                            />
                         ))}
                     </div>
+                </div>
+                 
+                 <div className="bg-white p-4 rounded-3xl shadow-sm">
+                        <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">年龄</label>
+                        <input 
+                            type="number" 
+                            className="w-full text-2xl font-bold bg-transparent outline-none placeholder-gray-200 text-gray-900"
+                            placeholder="24"
+                            onChange={e => updateForm('age', parseFloat(e.target.value))}
+                        />
                 </div>
             </div>
         ) : (
-            <div className="space-y-4 animate-in fade-in slide-in-from-right duration-500">
-                <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">最近食欲</label>
-                    <div className="grid grid-cols-4 gap-2">
+            <div className="space-y-6 animate-slide-up">
+                <div className="bg-white p-5 rounded-3xl shadow-sm space-y-4">
+                    <label className="block text-sm font-semibold text-gray-900">最近食欲</label>
+                    <div className="grid grid-cols-2 gap-3">
                         {['good', 'normal', 'poor', 'cravings'].map((opt) => (
-                             <button
+                             <OptionButton
                                 key={opt}
+                                selected={formData.recentAppetite === opt}
                                 onClick={() => updateForm('recentAppetite', opt)}
-                                className={`py-2 text-[10px] rounded-xl border ${formData.recentAppetite === opt ? 'bg-primary text-white border-primary' : 'bg-white text-gray-600 border-gray-200'}`}
-                            >
-                                {opt === 'good' ? '胃口好' : opt === 'normal' ? '正常' : opt === 'poor' ? '没胃口' : '嘴馋'}
-                            </button>
+                                label={opt === 'good' ? '胃口好' : opt === 'normal' ? '正常' : opt === 'poor' ? '没胃口' : '嘴馋'}
+                            />
                         ))}
                     </div>
                 </div>
 
-                <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">睡眠质量</label>
-                    <div className="flex gap-2">
+                <div className="bg-white p-5 rounded-3xl shadow-sm space-y-4">
+                    <label className="block text-sm font-semibold text-gray-900">睡眠质量</label>
+                    <div className="grid grid-cols-3 gap-3">
                         {['good', 'fair', 'poor'].map((opt) => (
-                             <button
+                             <OptionButton
                                 key={opt}
+                                selected={formData.sleepQuality === opt}
                                 onClick={() => updateForm('sleepQuality', opt)}
-                                className={`flex-1 py-2 text-xs rounded-xl border ${formData.sleepQuality === opt ? 'bg-purple-400 text-white border-purple-400' : 'bg-white text-gray-600 border-gray-200'}`}
-                            >
-                                {opt === 'good' ? '香甜' : opt === 'fair' ? '一般' : '失眠'}
-                            </button>
+                                label={opt === 'good' ? '香甜' : opt === 'fair' ? '一般' : '失眠'}
+                            />
                         ))}
                     </div>
                 </div>
 
-                <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">最近目标</label>
-                    <select 
-                        className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none"
-                        onChange={e => updateForm('goal', e.target.value)}
-                    >
-                        <option value="maintain">保持健康</option>
-                        <option value="lose_weight">温和减脂</option>
-                        <option value="gain_muscle">增肌塑形</option>
-                    </select>
-                </div>
-                
-                <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">备注 (选填)</label>
-                    <textarea 
-                         className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none text-sm h-20"
-                         placeholder="最近有没有哪里不舒服，或者特别想吃的？"
-                         onChange={e => updateForm('healthStatus', e.target.value)}
-                    />
+                <div className="bg-white p-5 rounded-3xl shadow-sm space-y-4">
+                     <label className="block text-sm font-semibold text-gray-900">近期目标</label>
+                     <div className="flex flex-col gap-2">
+                         {[
+                             {id: 'maintain', label: '保持健康'},
+                             {id: 'lose_weight', label: '温和减脂'},
+                             {id: 'gain_muscle', label: '增肌塑形'}
+                         ].map(g => (
+                             <button
+                                key={g.id}
+                                onClick={() => updateForm('goal', g.id)}
+                                className={`w-full text-left px-4 py-3 rounded-xl transition-all ${
+                                    formData.goal === g.id 
+                                    ? 'bg-primary/10 text-primary font-bold' 
+                                    : 'text-gray-600 hover:bg-gray-50'
+                                }`}
+                             >
+                                 {g.label}
+                             </button>
+                         ))}
+                     </div>
                 </div>
             </div>
         )}
+      </div>
 
+      <div className="mt-8 w-full max-w-md mx-auto">
         <button 
             onClick={handleNext}
-            className="w-full bg-gradient-to-r from-primary to-rose-400 text-white font-bold py-4 rounded-2xl shadow-lg shadow-pink-200 hover:shadow-pink-300 transition-all transform active:scale-95 flex items-center justify-center gap-2"
+            className="w-full bg-black text-white font-bold text-lg py-4 rounded-3xl shadow-lg shadow-gray-300 hover:shadow-xl hover:-translate-y-1 transition-all active:scale-95 flex items-center justify-center gap-2"
         >
             {currentPhase === AppView.ONBOARDING_PHASE_1 ? '下一步' : '开启旅程'} <Icons.ArrowRight size={20}/>
         </button>
-
       </div>
     </div>
   );

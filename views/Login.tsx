@@ -15,61 +15,70 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
     if (username === '001' && password === '001') {
       onLogin();
     } else {
-      setError('用户名或密码错误 (提示: 001/001)');
+      setError('用户名或密码错误');
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-rose-50 p-6 relative overflow-hidden">
+    <div className="min-h-screen flex flex-col justify-center bg-background px-6 relative overflow-hidden">
       {/* Background Decor */}
-      <div className="absolute -top-20 -right-20 w-64 h-64 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-      <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-yellow-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
-      <div className="absolute top-40 left-20 w-64 h-64 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+      <div className="absolute -top-40 -right-40 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float"></div>
+      <div className="absolute top-40 -left-20 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-float animation-delay-2000"></div>
 
-      <div className="w-full max-w-sm bg-white/80 backdrop-blur-md rounded-3xl shadow-xl p-8 z-10 border border-white">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">今晚吃什么</h1>
-          <p className="text-gray-500">你的AI美食心情日记</p>
+      <div className="w-full max-w-sm mx-auto z-10 animate-fade-in">
+        <div className="mb-12 text-center">
+          <div className="w-20 h-20 bg-gradient-to-tr from-primary to-purple-400 rounded-[2rem] mx-auto shadow-ios-lg mb-6 flex items-center justify-center transform rotate-3">
+             <Icons.Utensils className="text-white w-10 h-10" />
+          </div>
+          <h1 className="text-3xl font-bold text-gray-900 tracking-tight mb-2">欢迎回来</h1>
+          <p className="text-text-secondary text-base">记录每一餐的温暖与美好</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 pl-1">用户名</label>
-            <div className="relative">
-              <Icons.User className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
-              <input 
-                type="text" 
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 text-gray-700"
-                placeholder="001"
-              />
+          <div className="bg-surface rounded-3xl shadow-ios p-2 space-y-1">
+            <div className="relative group">
+               <div className="absolute left-4 top-4 text-gray-400">
+                  <Icons.User size={20} />
+               </div>
+               <input 
+                  type="text" 
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="w-full pl-12 pr-4 py-4 bg-transparent border-b border-gray-100 focus:border-primary/50 focus:outline-none transition-colors text-gray-900 placeholder-gray-400"
+                  placeholder="用户名 (001)"
+               />
             </div>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 pl-1">密码</label>
-             <div className="relative">
-              <Icons.Utensils className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
-              <input 
-                type="password" 
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 text-gray-700"
-                placeholder="001"
-              />
+            <div className="relative group">
+               <div className="absolute left-4 top-4 text-gray-400">
+                  <Icons.Lock size={20} />
+               </div>
+               <input 
+                  type="password" 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full pl-12 pr-4 py-4 bg-transparent focus:outline-none text-gray-900 placeholder-gray-400"
+                  placeholder="密码 (001)"
+               />
             </div>
           </div>
 
-          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+          {error && (
+            <div className="flex items-center gap-2 text-primary bg-primary-subtle p-3 rounded-2xl text-sm justify-center">
+               <Icons.AlertCircle size={16} /> {error}
+            </div>
+          )}
 
           <button 
             type="submit" 
-            className="w-full bg-primary text-white font-bold py-3.5 rounded-xl shadow-lg shadow-pink-200 hover:shadow-pink-300 transition-all transform active:scale-95"
+            className="w-full bg-black text-white font-semibold text-lg py-4 rounded-3xl shadow-lg active:scale-95 transition-all duration-200 hover:shadow-xl"
           >
-            登录
+            开始记录
           </button>
         </form>
+        
+        <p className="mt-8 text-center text-xs text-gray-400">
+          Powered by Pudding AI
+        </p>
       </div>
     </div>
   );

@@ -2,7 +2,7 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>今晚吃什么</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -10,31 +10,50 @@
         theme: {
           extend: {
             colors: {
-              primary: '#F472B6', // Rose 400
-              secondary: '#FBCFE8', // Rose 200
-              accent: '#DDD6FE', // Violet 200
-              background: '#FFF1F2', // Rose 50
-              text: '#374151', // Gray 700
-              success: '#34D399',
+              primary: '#FF2D55', // iOS System Pink
+              'primary-subtle': '#FFEAF0',
+              secondary: '#5856D6', // iOS System Purple
+              background: '#F2F2F7', // iOS System Gray 6
+              surface: '#FFFFFF',
+              text: '#000000',
+              'text-secondary': '#8E8E93', // iOS System Gray
+              success: '#34C759', // iOS System Green
             },
             fontFamily: {
-              sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+              sans: [
+                '-apple-system', 
+                'BlinkMacSystemFont', 
+                '"SF Pro Text"', 
+                '"Segoe UI"', 
+                'Roboto', 
+                'Helvetica', 
+                'Arial', 
+                'sans-serif'
+              ],
+            },
+            boxShadow: {
+              'ios': '0 4px 20px rgba(0, 0, 0, 0.05)',
+              'ios-lg': '0 10px 30px rgba(0, 0, 0, 0.08)',
+              'glass': '0 4px 30px rgba(0, 0, 0, 0.1)',
             },
             animation: {
               'float': 'float 6s ease-in-out infinite',
               'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-              'blob': 'blob 7s infinite',
+              'slide-up': 'slideUp 0.3s ease-out forwards',
+              'fade-in': 'fadeIn 0.3s ease-out forwards',
             },
             keyframes: {
               float: {
                 '0%, 100%': { transform: 'translateY(0)' },
                 '50%': { transform: 'translateY(-10px)' },
               },
-              blob: {
-                '0%': { transform: 'translate(0px, 0px) scale(1)' },
-                '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
-                '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
-                '100%': { transform: 'translate(0px, 0px) scale(1)' },
+              slideUp: {
+                '0%': { transform: 'translateY(20px)', opacity: '0' },
+                '100%': { transform: 'translateY(0)', opacity: '1' },
+              },
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
               }
             }
           },
@@ -43,23 +62,23 @@
     </script>
     <style>
       body {
-        background-color: #FFF1F2;
-        color: #374151;
+        background-color: #F2F2F7;
+        color: #1C1C1E;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
         -webkit-tap-highlight-color: transparent;
       }
-      /* Custom scrollbar for webkit */
+      /* Hide scrollbar for clean UI, but allow scrolling */
       ::-webkit-scrollbar {
-        width: 6px;
+        display: none;
       }
-      ::-webkit-scrollbar-track {
-        background: transparent;
+      .glass {
+        background: rgba(255, 255, 255, 0.75);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
       }
-      ::-webkit-scrollbar-thumb {
-        background: #FBCFE8;
-        border-radius: 10px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #F472B6;
+      .safe-area-bottom {
+        padding-bottom: env(safe-area-inset-bottom);
       }
     </style>
   <script type="importmap">
