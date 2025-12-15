@@ -1,9 +1,9 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import { UserProfile, MealEntry, DayLog, MealType } from "../types";
+import { UserProfile, MealEntry, DayLog, MealType, NutritionData } from "../types";
+import { getExactRecipeMatch } from "../data/recipes";
 
 // Initialize the API client
-// Note: In a production environment, this should probably be proxied through a backend
-// to protect the API key, but for this client-side demo we use the env var.
+// The API key must be obtained exclusively from the environment variable process.env.API_KEY.
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 const SYSTEM_INSTRUCTION = `
@@ -13,9 +13,40 @@ You use emojis occasionally.
 You balance professional nutritional science with emotional support.
 Always prioritize the user's health and well-being.
 Do not recommend extreme diets.
+
+IMPORTANT: ALWAYS RESPOND IN SIMPLIFIED CHINESE (简体中文).
 `;
 
-export const analyzeMeal = async (mealDescription: string, userProfile: UserProfile): Promise<any> => {
+export const analyzeMeal = async (mealDescription: string, userProfile: UserProfile): Promise<NutritionData | null> => {
+  // 1. Check Local Database first for speed
+  const localMatch = getExactRecipeMatch(mealDescription.trim());
+  if (localMatch) {
+    // Generate context-aware feedback locally if possible, or append to default
+    let suggestion = "";
+    if (userProfile.goal === 'lose_weight' && localMatch.calories > 500) {
+        suggestion = "热量稍稍有点高，晚一点可以适当活动一下哦。";
+    } else if (userProfile.goal === 'gain_muscle' && parseFloat(localMatch.protein) < 15) {
+        suggestion = "蛋白质还可以再多一点，加个蛋或者喝杯奶吧！";
+    }
+
+    return {
+        calories: localMatch.calories,
+        protein: localMatch.protein,
+        carbs: localMatch.carbs,
+        fat: localMatch.fat,
+        tags: localMatch.tags,
+        healthScore: localMatch.healthScore,
+        feedback: localMatch.defaultFeedback,
+        suggestion: suggestion || undefined
+    };
+  }
+
+  // 2. Fallback to AI Analysis
+  if (!process.env.API_KEY) {
+      console.error("API Key is missing.");
+      return null;
+  }
+
   const modelId = "gemini-2.5-flash";
   
   const prompt = `
@@ -60,6 +91,7 @@ export const getMealRecommendation = async (
   userProfile: UserProfile, 
   recentLogs: DayLog[]
 ): Promise<any[]> => {
+  if (!process.env.API_KEY) return [];
   const modelId = "gemini-2.5-flash";
 
   const historySummary = recentLogs.map(log => ({
@@ -108,6 +140,7 @@ export const getDailyReport = async (
   dayLog: DayLog,
   userProfile: UserProfile
 ): Promise<string> => {
+    if (!process.env.API_KEY) return "API Key 未配置";
     const modelId = "gemini-2.5-flash";
     const prompt = `
         Generate a short, encouraging daily summary report (max 100 words) based on today's meals and mood.
