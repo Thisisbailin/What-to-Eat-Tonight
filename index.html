@@ -10,46 +10,66 @@
         theme: {
           extend: {
             colors: {
-              primary: '#FF2D55', // iOS System Pink
-              'primary-subtle': '#FFEAF0',
-              secondary: '#5856D6', // iOS System Purple
-              background: '#F2F2F7', // iOS System Gray 6
+              primary: '#FF9EB5', // Softer Pink
+              'primary-dark': '#FF7597',
+              'primary-light': '#FFF0F5',
+              'primary-fade': 'rgba(255, 158, 181, 0.1)',
+              secondary: '#B8E1FF', // Soft Blue
+              accent: '#DCD3FF', // Soft Purple
+              background: '#FAFAFA', // Cleaner off-white background
               surface: '#FFFFFF',
-              text: '#000000',
-              'text-secondary': '#8E8E93', // iOS System Gray
-              success: '#34C759', // iOS System Green
+              text: '#2C2C2E', // Apple-like dark gray
+              'text-secondary': '#8E8E93', // Apple-like secondary text
+              'text-tertiary': '#C7C7CC',
+              success: '#34C759',
+              warning: '#FF9500',
+              danger: '#FF3B30',
             },
             fontFamily: {
               sans: [
                 '-apple-system', 
                 'BlinkMacSystemFont', 
+                '"SF Pro Rounded"', 
                 '"SF Pro Text"', 
-                '"Segoe UI"', 
                 'Roboto', 
-                'Helvetica', 
-                'Arial', 
                 'sans-serif'
               ],
             },
             boxShadow: {
-              'ios': '0 4px 20px rgba(0, 0, 0, 0.05)',
-              'ios-lg': '0 10px 30px rgba(0, 0, 0, 0.08)',
-              'glass': '0 4px 30px rgba(0, 0, 0, 0.1)',
+              'card': '0 4px 24px rgba(0, 0, 0, 0.03)',
+              'card-hover': '0 8px 32px rgba(0, 0, 0, 0.06)',
+              'glow': '0 0 20px rgba(255, 158, 181, 0.4)',
+              'float': '0 10px 40px -10px rgba(0,0,0,0.1)',
+            },
+            borderRadius: {
+              '4xl': '2rem',
+              '5xl': '2.5rem',
             },
             animation: {
               'float': 'float 6s ease-in-out infinite',
-              'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-              'slide-up': 'slideUp 0.3s ease-out forwards',
-              'fade-in': 'fadeIn 0.3s ease-out forwards',
+              'blob': 'blob 10s infinite',
+              'slide-up': 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+              'scale-in': 'scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+              'fade-in': 'fadeIn 0.5s ease-out forwards',
             },
             keyframes: {
               float: {
                 '0%, 100%': { transform: 'translateY(0)' },
                 '50%': { transform: 'translateY(-10px)' },
               },
+              blob: {
+                '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                '100%': { transform: 'translate(0px, 0px) scale(1)' },
+              },
               slideUp: {
                 '0%': { transform: 'translateY(20px)', opacity: '0' },
                 '100%': { transform: 'translateY(0)', opacity: '1' },
+              },
+              scaleIn: {
+                '0%': { transform: 'scale(0.95)', opacity: '0' },
+                '100%': { transform: 'scale(1)', opacity: '1' },
               },
               fadeIn: {
                 '0%': { opacity: '0' },
@@ -62,23 +82,52 @@
     </script>
     <style>
       body {
-        background-color: #F2F2F7;
-        color: #1C1C1E;
+        background-color: #FAFAFA;
+        color: #2C2C2E;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         -webkit-tap-highlight-color: transparent;
       }
-      /* Hide scrollbar for clean UI, but allow scrolling */
-      ::-webkit-scrollbar {
+      
+      /* Smooth scrolling */
+      html {
+        scroll-behavior: smooth;
+      }
+      
+      /* Hide scrollbar */
+      .no-scrollbar::-webkit-scrollbar {
         display: none;
       }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
+      /* Apple-like Glass */
       .glass {
-        background: rgba(255, 255, 255, 0.75);
+        background: rgba(255, 255, 255, 0.7);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
       }
-      .safe-area-bottom {
-        padding-bottom: env(safe-area-inset-bottom);
+      
+      .glass-card {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+      }
+
+      .safe-top {
+        padding-top: max(env(safe-area-inset-top), 20px);
+      }
+      .safe-bottom {
+        padding-bottom: max(env(safe-area-inset-bottom), 20px);
+      }
+
+      input:focus {
+        outline: none;
       }
     </style>
   <script type="importmap">

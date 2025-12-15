@@ -17,11 +17,15 @@ import {
   Loader2,
   ChevronLeft,
   Lock,
-  AlertCircle
+  AlertCircle,
+  Sparkles,
+  ChefHat,
+  Edit3,
+  Check
 } from 'lucide-react';
 
 export const Icons = {
   Heart, Utensils, Calendar, User, BarChart2, Plus, ArrowRight,
   Sun, Moon, Coffee, Smile, Frown, Meh, Activity, Send, Loader2, ChevronLeft,
-  Lock, AlertCircle
+  Lock, AlertCircle, Sparkles, ChefHat, Edit3, Check
 };

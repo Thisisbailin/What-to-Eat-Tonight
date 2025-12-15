@@ -2,9 +2,18 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { UserProfile, MealEntry, DayLog, MealType, NutritionData } from "../types";
 import { getExactRecipeMatch } from "../data/recipes";
 
-// Initialize the API client
-// The API key must be obtained exclusively from the environment variable process.env.API_KEY.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Helper to get AI client safely
+// This lazy-loads the client so the app doesn't crash on startup if the key is missing
+const getAiClient = () => {
+  try {
+    if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
+      return new GoogleGenAI({ apiKey: process.env.API_KEY });
+    }
+  } catch (e) {
+    console.error("Failed to initialize Gemini Client", e);
+  }
+  return null;
+};
 
 const SYSTEM_INSTRUCTION = `
 You are "Pudding" (布丁), a cute, caring, and professional AI Nutritionist for young women. 
@@ -42,7 +51,8 @@ export const analyzeMeal = async (mealDescription: string, userProfile: UserProf
   }
 
   // 2. Fallback to AI Analysis
-  if (!process.env.API_KEY) {
+  const ai = getAiClient();
+  if (!ai) {
       console.error("API Key is missing.");
       return null;
   }
@@ -91,7 +101,9 @@ export const getMealRecommendation = async (
   userProfile: UserProfile, 
   recentLogs: DayLog[]
 ): Promise<any[]> => {
-  if (!process.env.API_KEY) return [];
+  const ai = getAiClient();
+  if (!ai) return [];
+
   const modelId = "gemini-2.5-flash";
 
   const historySummary = recentLogs.map(log => ({
@@ -140,7 +152,9 @@ export const getDailyReport = async (
   dayLog: DayLog,
   userProfile: UserProfile
 ): Promise<string> => {
-    if (!process.env.API_KEY) return "API Key 未配置";
+    const ai = getAiClient();
+    if (!ai) return "API Key 未配置，无法生成报告";
+    
     const modelId = "gemini-2.5-flash";
     const prompt = `
         Generate a short, encouraging daily summary report (max 100 words) based on today's meals and mood.
